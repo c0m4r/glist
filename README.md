@@ -41,10 +41,19 @@ across stores and physical media.
 ## Running
 
 ```sh
+git clone https://github.com/c0m4r/glist.git || \
+(
+  wget -O glist.zip https://github.com/c0m4r/glist/archive/refs/heads/main.zip \
+  && unzip glist.zip \
+  && mv glist-main glist \
+  && rm -f glist.zip
+)
+cd glist
 python3 server.py
 ```
 
-Then open <http://localhost:8420>. No dependencies — Python 3 stdlib only.
+Then open <http://localhost:8420>.
+
 The library is stored in `glist.db` (SQLite) next to the server.
 
 Change the port with `GLIST_PORT=9000 python3 server.py`.
