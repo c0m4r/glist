@@ -1,9 +1,15 @@
-<img src="static/logo.svg" width="84" align="right" alt="glist logo">
+<div align="center">
+
+<img src="static/logo.svg" width="84" alt="glist logo">
 
 # glist — personal games library
 
 A self-hosted, zero-dependency web app for cataloguing your game collection
 across stores and physical media.
+
+<img width="731" height="729" alt="image" src="https://github.com/user-attachments/assets/ae39b9eb-dd5e-42a2-9abb-cc67876f4980" />
+
+</div>
 
 ## Features
 
@@ -25,6 +31,12 @@ across stores and physical media.
   text search, detail view with hero image, platform switching, deletion.
 - **Deep links**: `#g<id>` opens a game's details, `#add` opens the add dialog.
 - Responsive dark UI with blue accents — works on desktop and mobile.
+
+<div align="center">
+
+<img width="708" height="688" alt="image" src="https://github.com/user-attachments/assets/6fbc0781-3033-46dd-867e-49fd52bb49fd" />
+
+</div>
 
 ## Running
 
