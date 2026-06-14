@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0f1a">
+<title>glist — Games Library</title>
+<script>
+// set theme before first paint: saved choice, else system preference
+(function () {
+  var t = new URLSearchParams(location.search).get("theme") ||
+          localStorage.getItem("glist-theme");
+  if (t !== "light" && t !== "dark") {
+    t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  }
+  document.documentElement.dataset.theme = t;
+})();
+</script>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="/">
+      <svg class="brand-icon" viewBox="16 4 64 82" aria-hidden="true">
+        <defs>
+          <linearGradient id="bside" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f8ef7"/><stop offset="1" stop-color="#1d4ed8"/></linearGradient>
+          <linearGradient id="bmid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#93c5fd"/><stop offset="1" stop-color="#3b82f6"/></linearGradient>
+        </defs>
+        <path fill="#60a5fa" d="M40.5 6 H46.5 V9 H49.5 V6 H55.5 V9 H58.5 V15 H55.5 V18 H52.5 V21 H49.5 V24 H46.5 V21 H43.5 V18 H40.5 V15 H37.5 V9 H40.5 Z"/>
+        <rect x="19" y="38" width="16" height="40" rx="3.5" fill="url(#bside)"/>
+        <rect x="40" y="28" width="16" height="50" rx="3.5" fill="url(#bmid)"/>
+        <rect x="61" y="38" width="16" height="40" rx="3.5" fill="url(#bside)"/>
+        <rect x="23" y="45" width="8" height="3.5" rx="1.75" fill="#0b1220" opacity="0.45"/>
+        <rect x="44" y="35" width="8" height="3.5" rx="1.75" fill="#0b1220" opacity="0.45"/>
+        <rect x="65" y="45" width="8" height="3.5" rx="1.75" fill="#0b1220" opacity="0.45"/>
+        <rect x="18" y="78" width="60" height="6" rx="3" fill="#3e5e9e"/>
+      </svg>
+      <span>g<em>list</em></span>
+    </a>
+    <div class="searchbox">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="library-search" type="search" placeholder="Search your library…" autocomplete="off">
+    </div>
+    <button id="btn-theme" class="icon-btn theme-toggle" aria-label="Switch theme" title="Switch theme">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.05" y2="7.05"/><line x1="16.95" y1="16.95" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.05" y2="16.95"/><line x1="16.95" y1="7.05" x2="19.07" y2="4.93"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <button id="btn-add" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span>Add game</span>
+    </button>
+  </div>
+</header>
+
+<nav class="filters" id="filters">
+  <button class="chip active" data-platform="all">All <span class="count" id="count-all"></span></button>
+  <button class="chip" data-platform="steam">Steam</button>
+  <button class="chip" data-platform="gog">GOG</button>
+  <button class="chip" data-platform="ea">EA</button>
+  <button class="chip" data-platform="ubisoft">Ubisoft</button>
+  <button class="chip" data-platform="epic">Epic</button>
+  <button class="chip" data-platform="physical-original">📦 Box</button>
+  <button class="chip" data-platform="physical-cdaction">💿 CD-Action</button>
+</nav>
+
+<main>
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="empty hidden">
+    <div class="empty-art">🕹️</div>
+    <h2>Your library is empty</h2>
+    <p>Hit <strong>Add game</strong> to search for games and start your collection.</p>
+  </div>
+</main>
+
+<!-- Add game modal -->
+<div class="modal-backdrop hidden" id="add-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Add a game</h2>
+      <button class="icon-btn modal-close" data-close="add-modal" aria-label="Close">✕</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="tab-search">Search</button>
+      <button class="tab" data-tab="tab-manual">Manual entry</button>
+    </div>
+
+    <section id="tab-search" class="tab-panel">
+      <div class="searchbox modal-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="api-search" type="search" placeholder="Search games database…" autocomplete="off">
+      </div>
+      <div id="api-status" class="api-status">Type at least 2 characters to search.</div>
+      <ul id="api-results" class="api-results"></ul>
+    </section>
+
+    <section id="tab-manual" class="tab-panel hidden">
+      <form id="manual-form" class="form">
+        <label>Title <span class="req">*</span>
+          <input name="title" type="text" required placeholder="e.g. Gothic II">
+        </label>
+        <label>Cover image (upload)
+          <input name="cover_file" type="file" accept="image/jpeg,image/png,image/gif,image/webp">
+        </label>
+        <label>…or cover image URL
+          <input name="cover" type="url" placeholder="https://… (portrait works best)">
+        </label>
+        <label>Release date
+          <input name="release_date" type="text" placeholder="e.g. 2002">
+        </label>
+        <label>Developer
+          <input name="developer" type="text">
+        </label>
+        <label>Description
+          <textarea name="description" rows="3"></textarea>
+        </label>
+        <div class="platform-pick" data-role="platform-pick"></div>
+        <button type="submit" class="btn btn-primary btn-wide">Add to library</button>
+      </form>
+    </section>
+  </div>
+</div>
+
+<!-- Platform picker (after choosing a search result) -->
+<div class="modal-backdrop hidden" id="platform-modal">
+  <div class="modal modal-sm">
+    <div class="modal-head">
+      <h2 id="platform-modal-title">Where do you own it?</h2>
+      <button class="icon-btn modal-close" data-close="platform-modal" aria-label="Close">✕</button>
+    </div>
+    <div class="picked-game" id="picked-game"></div>
+    <div class="platform-pick" data-role="platform-pick"></div>
+    <button id="confirm-add" class="btn btn-primary btn-wide" disabled>Add to library</button>
+  </div>
+</div>
+
+<!-- Game details modal -->
+<div class="modal-backdrop hidden" id="detail-modal">
+  <button class="nav-arrow nav-prev hidden" id="nav-prev" aria-label="Previous game">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <div class="modal modal-detail">
+    <button class="icon-btn modal-close detail-close" data-close="detail-modal" aria-label="Close">✕</button>
+    <div id="detail-body"></div>
+  </div>
+  <button class="nav-arrow nav-next hidden" id="nav-next" aria-label="Next game">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -3 96 96">
+  <defs>
+    <linearGradient id="side" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4f8ef7"/>
+      <stop offset="1" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="mid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#93c5fd"/>
+      <stop offset="1" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- pixel heart, centered -->
+  <path fill="#60a5fa" d="M40.5 6 H46.5 V9 H49.5 V6 H55.5 V9 H58.5 V15 H55.5 V18 H52.5 V21 H49.5 V24 H46.5 V21 H43.5 V18 H40.5 V15 H37.5 V9 H40.5 Z"/>
+
+  <!-- three game-cover spines, tall one centered -->
+  <rect x="19" y="38" width="16" height="40" rx="3.5" fill="url(#side)"/>
+  <rect x="40" y="28" width="16" height="50" rx="3.5" fill="url(#mid)"/>
+  <rect x="61" y="38" width="16" height="40" rx="3.5" fill="url(#side)"/>
+
+  <!-- label notches -->
+  <rect x="23" y="45" width="8" height="3.5" rx="1.75" fill="#0b1220" opacity="0.45"/>
+  <rect x="44" y="35" width="8" height="3.5" rx="1.75" fill="#0b1220" opacity="0.45"/>
+  <rect x="65" y="45" width="8" height="3.5" rx="1.75" fill="#0b1220" opacity="0.45"/>
+
+  <!-- shelf -->
+  <rect x="18" y="78" width="60" height="6" rx="3" fill="#3e5e9e"/>
+</svg>
